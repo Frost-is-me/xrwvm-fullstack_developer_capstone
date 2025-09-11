@@ -33,8 +33,6 @@ def analyze_review_sentiments(text):
         print(f"Unexpected {err=}, {type(err)=}")
         print("Network exception occurred")
 
-
-
 def post_review(data_dict):
     request_url = backend_url+"/insert_review"
     try:
@@ -43,3 +41,14 @@ def post_review(data_dict):
         return(response.json())
     except:
         print("Network exception occurred")
+
+def add_review(request):
+    if(request.user.is_anonymous == False):
+        data = json.loads(request.body)
+        try:
+            response = post_review(data)
+            return JsonResponse({"status":200})
+        except:
+            return JsonResponse({"status":401,"message":"Error in posting review"})
+    else:
+        return JsonResponse({"status":403,"message":"Unauthorized"})
